@@ -1,6 +1,16 @@
 #ifndef ASM8HEADER
 #define ASM8HEADER
 
-void sayHi();
+namespace assembler
+{
+
+  class Ch8asmCode
+  {
+    public:
+
+    private:
+  };
+
+}
 
 #endif

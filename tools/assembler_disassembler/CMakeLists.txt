@@ -2,7 +2,7 @@
 
 #cmake_minimum_required(VERSION 3.10) # miniumum version
 cmake_minimum_required (VERSION 2.6)
-project (BuildingYourOwnOpenglApp)
+project (chip8buildtool)
 
 
 # compiler flags for debugging
@@ -16,11 +16,13 @@ add_definitions(${GCC_COVERAGE_COMPILE_FLAGS})
 # sets for header and souce files
 set(HEADER_FILES
   ./asm8header.h
+  ./disass8header.h
 )
 
 set(SOURCE_FILES
   ./main.cpp
   ./asm8build.cpp
+  ./ch8disassembler.cpp
 )
 
 add_executable(chip8builder
