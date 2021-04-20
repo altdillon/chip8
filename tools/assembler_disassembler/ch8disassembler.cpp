@@ -13,12 +13,12 @@ namespace disassembler
   {
     if(filePath.length() > 0)
     {
-      this->rawhex = new vector<char>();
+      this->rawhex = new vector<uint8_t>();
       this->readRawHex(filePath,this->rawhex);
     }
   }
 
-  size_t Ch8file::readRawHex(string filePath,vector<char> *rawdat)
+  size_t Ch8file::readRawHex(string filePath,vector<uint8_t> *rawdat)
   {
     // http://www.cplusplus.com/reference/fstream/ifstream/
     // define some instance variables 
@@ -80,10 +80,45 @@ namespace disassembler
     }
   }
 
-  assembler::Ch8asmCode Ch8file::disAssembleCh8()
+  vector<string> Ch8file::disAssembleCh8()
   {
+    vector<string> asmPgm;
+
     // TODO make a big ol switch statement that takes in the assembled hex and converters it
     // ... to human readable assembley!!!
+    for(int i = 0;i<this->rawhex->size();i++)
+    {
+      uint8_t opValue = this->rawhex->at(i);
+      uint8_t firstNib = opValue >> 4; // shift the bits over to get the opcode
+      // https://stackoverflow.com/questions/4983092/c-equivalent-of-sprintf
+      // https://www.cplusplus.com/forum/windows/51591/
+
+      // print out the memory address in hex, with the 0x200 offset
+      cout << hex << "0x" << (i+0x200) << " ";
+
+      // use switch to print out the 8bit command
+      switch(firstNib)
+      {
+        case 0x00: cout << "op not handled" << endl;
+        case 0x01: cout << "op not handled" << endl;
+        case 0x02: cout << "op not handled" << endl;
+        case 0x03: cout << "op not handled" << endl;
+        case 0x04: cout << "op not handled" << endl;
+        case 0x05: cout << "op not handled" << endl;
+        case 0x06: cout << "op not handled" << endl;
+        case 0x07: cout << "op not handled" << endl;
+        case 0x08: cout << "op not handled" << endl;
+        case 0x09: cout << "op not handled" << endl;
+        case 0x0A: cout << "op not handled" << endl;
+        case 0x0B: cout << "op not handled" << endl;
+        case 0x0C: cout << "op not handled" << endl;
+        case 0x0D: cout << "op not handled" << endl;
+        case 0x0E: cout << "op not handled" << endl;
+        case 0x0F: cout << "op not handled" << endl;
+        default: cout << "unknown opcode" << endl;
+      }
+    }
+    return asmPgm;
   }
 
 }

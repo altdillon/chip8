@@ -3,9 +3,11 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <sstream>
+#include <iomanip>
 #include <stdint.h> 
 #include <stdio.h>
-#include "asm8header.h"
+//#include "asm8header.h"
 
 using namespace std;
 
@@ -20,11 +22,13 @@ namespace disassembler
     ~Ch8file();
    // public methods 
    void printOut();
-   assembler::Ch8asmCode disAssembleCh8();
+   vector<string> disAssembleCh8();
 
   private:
-    vector<char> *rawhex;                      // the read in raw hex
-    size_t readRawHex(string filePath,vector<char> *rawdat); // helper function for reading in raw hex
+    vector<uint8_t> *rawhex;                      // the read in raw hex
+    size_t readRawHex(string filePath,vector<uint8_t> *rawdat); // helper function for reading in raw hex
+    
+    
   };
 }
 
