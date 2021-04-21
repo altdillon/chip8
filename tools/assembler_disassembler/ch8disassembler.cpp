@@ -94,29 +94,33 @@ namespace disassembler
       // https://www.cplusplus.com/forum/windows/51591/
 
       // print out the memory address in hex, with the 0x200 offset
-      cout << hex << "0x" << (i+0x200) << " ";
+      //cout << hex << "0x" << (i+0x200) << " ";
+      //cout << hex << "0x" << firstNib << endl;
+      printf("0x%.2x : 0x%.2x :> ",i+0x200,firstNib); // smh++
 
       // use switch to print out the 8bit command
+      
       switch(firstNib)
       {
-        case 0x00: cout << "op not handled" << endl;
-        case 0x01: cout << "op not handled" << endl;
-        case 0x02: cout << "op not handled" << endl;
-        case 0x03: cout << "op not handled" << endl;
-        case 0x04: cout << "op not handled" << endl;
-        case 0x05: cout << "op not handled" << endl;
-        case 0x06: cout << "op not handled" << endl;
-        case 0x07: cout << "op not handled" << endl;
-        case 0x08: cout << "op not handled" << endl;
-        case 0x09: cout << "op not handled" << endl;
-        case 0x0A: cout << "op not handled" << endl;
-        case 0x0B: cout << "op not handled" << endl;
-        case 0x0C: cout << "op not handled" << endl;
-        case 0x0D: cout << "op not handled" << endl;
-        case 0x0E: cout << "op not handled" << endl;
-        case 0x0F: cout << "op not handled" << endl;
+        case 0x00: cout << "op not handled" << endl; break;
+        case 0x01: cout << "op not handled" << endl; break;
+        case 0x02: cout << "op not handled" << endl; break;
+        case 0x03: cout << "op not handled" << endl; break;
+        case 0x04: cout << "op not handled" << endl; break;
+        case 0x05: cout << "op not handled" << endl; break;
+        case 0x06: cout << "op not handled" << endl; break;
+        case 0x07: cout << "op not handled" << endl; break;
+        case 0x08: cout << "op not handled" << endl; break;
+        case 0x09: cout << "op not handled" << endl; break;
+        case 0x0A: cout << "op not handled" << endl; break;
+        case 0x0B: cout << "op not handled" << endl; break;
+        case 0x0C: cout << "op not handled" << endl; break;
+        case 0x0D: cout << "op not handled" << endl; break;
+        case 0x0E: cout << "op not handled" << endl; break;
+        case 0x0F: cout << "op not handled" << endl; break;
         default: cout << "unknown opcode" << endl;
       }
+      
     }
     return asmPgm;
   }
