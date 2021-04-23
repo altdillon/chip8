@@ -26,9 +26,7 @@ namespace disassembler
 
   private:
     vector<uint8_t> *rawhex;                      // the read in raw hex
-    size_t readRawHex(string filePath,vector<uint8_t> *rawdat); // helper function for reading in raw hex
-    
-    
+    size_t readRawHex(string filePath,vector<uint8_t> *rawdat); // helper function for reading in raw hex  
   };
 }
 
