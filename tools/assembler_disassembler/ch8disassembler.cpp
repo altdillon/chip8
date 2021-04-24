@@ -109,6 +109,7 @@ namespace disassembler
      TODO: clean up the iterator 
     */
 
+   
     vector<string> asmPgm; // hold the disassembled chip8 program
     vector<uint8_t>::iterator itr; // iterator for the vector holding our chip8 program
     // use the interator and a while loop to list all the 16 bit values in the chip8 file
@@ -118,50 +119,181 @@ namespace disassembler
     while(itr != this->rawhex->end())
     {
       // make two 8 bit values into a 16bit value 
-      chip8mem = *itr;
+      //chip8mem = *itr;
       uint8_t firstByte = *itr;
       //++ itr;
       uint8_t secondByte = *(++itr);
-      chip8mem = (chip8mem << 8) | (*itr & 0xff);
+      //chip8mem = (chip8mem << 8) | (*itr & 0xff);
+      chip8mem = (firstByte << 8) | secondByte;
 
-      if(chip8mem != 0x000) // 0x0000 is just blank, so don't print anything out here
+      if(chip8mem != 0x000 ) // 0x0000 is just blank, so don't print anything out here
       {
-        printf("0x%.3x : 0x%.4x > ",chip8memcount+0x200,chip8mem);
-      }
+        printf("0x%.3x : 0x%.4x  ",chip8memcount+0x200,chip8mem);
+        //printf("0x%.3x : 0x%.4x  ",chip8memcount,chip8mem); // remove the offset     
 
-      // use a switch statement to do some basic decoding.
-      // start with the first byte, than do some extra stuff depending on the second byte
-      uint8_t firstNib = firstByte >> 4; // get the first nibble
-      switch(firstNib)
-      {
-        case 0x00: 
-          {
-            if(secondByte == 0xE0) // CLS
+        // use a switch statement to do some basic decoding.
+        // start with the first byte, than do some extra stuff depending on the second byte
+        uint8_t firstNib = firstByte >> 4; // get the first nibble
+        switch(firstNib)
+        {
+          case 0x00: 
             {
-              cout << "CLS" << endl;
+              if(secondByte == 0xE0) // CLS
+              {
+                cout << "CLS" << endl;
+              }
+              else if(secondByte == 0xEE) // REG
+              {
+                cout << "RET" << endl;
+              }
+              else // this might print out a new line if the thing is data? It might also have to do with the sys adder function, which should be ignored
+              {
+                //printf("hi: 0x%.2x lo: 0x%.2x firstnib: 0x%.2x \n",firstByte,secondByte,firstNib);
+                cout << "data?" << endl;
+              }
+            } 
+          break;
+          case 0x01: // JP (jump) to address nnn
+            { 
+              // get the address info from the last 3 bytes
+              uint16_t addr =  chip8mem & 0x0FFF; 
+              printf("JP 0x%.3x \n",addr);           
             }
-            else if(secondByte == 0xEE) // REG
+            break;
+          case 0x02: // Call adder
             {
-              cout << "RET" << endl;
+              uint16_t addr = chip8mem & 0x0FFF;
+              printf("Call 0x%.3x \n",addr);
+            } 
+            break;
+          case 0x03: 
+            {
+              uint8_t reg = firstByte & 0x0F;
+              printf("SE V%d, 0x%.2x \n",reg,secondByte);
             }
-          } 
-        break;
-        case 0x01: cout << "command not handled" << endl; break;
-        case 0x02: cout << "command not handled" << endl; break;
-        case 0x03: cout << "command not handled" << endl; break;
-        case 0x04: cout << "command not handled" << endl; break;
-        case 0x05: cout << "command not handled" << endl; break;
-        case 0x06: cout << "command not handled" << endl; break;
-        case 0x07: cout << "command not handled" << endl; break;
-        case 0x08: cout << "command not handled" << endl; break;
-        case 0x09: cout << "command not handled" << endl; break;
-        case 0x0A: cout << "command not handled" << endl; break;
-        case 0x0B: cout << "command not handled" << endl; break;
-        case 0x0C: cout << "command not handled" << endl; break;
-        case 0x0D: cout << "command not handled" << endl; break;
-        case 0x0E: cout << "command not handled" << endl; break;
-        case 0x0F: cout << "command not handled" << endl; break;
-        default: cout << "unknown command" << endl; break;
+            break;
+          case 0x04: 
+            {
+              uint8_t reg = firstByte & 0x0F;
+              printf("SNE V%d, 0x%.2x \n",reg,secondByte);     
+            } 
+            break;
+          case 0x05: 
+            {
+              // pull out VX and VY
+              uint8_t VX = firstByte & 0x0F;
+              uint8_t VY = secondByte >> 4;
+              printf("SE V%d , V%d \n",VX,VY); 
+            }
+            break;
+          case 0x06: 
+            {
+              uint8_t VX = firstByte & 0x0F;
+              printf("LD V%d, 0x%.2x \n",VX,secondByte);
+            }
+            break;
+          case 0x07: 
+            {
+              uint8_t VX = firstByte & 0x0F;
+              printf("ADD V%d, 0x%.2x \n",VX,secondByte);
+            } 
+            break;
+          case 0x08: 
+            {
+              // get the values for VX and VY
+              uint8_t VX = firstByte & 0x0F;
+              uint8_t VY = secondByte >> 4;
+              // get the last byte, which are basicly ALU stuff
+              uint8_t aluOp = secondByte & 0x0F;
+              // now figure out which value to print out
+              switch(aluOp)
+              {
+                case 0x00: printf("LD V%d, V%d \n",VX,VY); break;
+                case 0x01: printf("OR V%d, V%d \n",VX,VY); break;
+                case 0x02: printf("AND V%d, V%d \n",VX,VY); break;
+                case 0x03: printf("XOR V%d, V%d \n",VX,VY); break;
+                case 0x04: printf("ADD V%d, V%d \n",VX,VY); break;
+                case 0x05: printf("SUB V%d, V%d \n",VX,VY); break;
+                case 0x06: printf("SHR V%d, {V%d} \n",VX,VY); break;
+                case 0x07: printf("SUBN V%d, V%d \n",VX,VY); break;
+                case 0x0E: printf("SHL V%d, {V%d} \n",VX,VY); break;
+                
+                default: printf("%s\n","ALU operation not handled"); break;
+              }
+            } 
+            break;
+          case 0x09: 
+            {
+              uint8_t VX = firstByte & 0x0F;
+              uint8_t VY = secondByte >> 4;
+              printf("SNE V%d, V%d \n",VX,VY);
+            }
+            break;
+          case 0x0A: // ANNN, LD, I think this instruction sets a value called I to NNN.  I is used for indirect addressing?
+            {
+              uint16_t ivalue = chip8mem & 0x0FFF; // mask out the values 
+              printf("LD I, 0x%.3x \n",ivalue);
+            }
+            break;
+          case 0x0B: 
+           {
+              uint16_t ivalue = chip8mem & 0x0FFF; // mask out the values 
+              printf("JP V0, 0x%.3x \n",ivalue);            
+           }
+           break;
+          case 0x0C: 
+            {
+              uint8_t VX = firstByte & 0x0F;
+              printf("RND V%d, 0x%.2x \n",VX,secondByte);
+            }
+            break;
+          case 0x0D: 
+            {
+              // get the values for VX and VY and the nibble.  Use a mask
+              uint8_t VX = firstByte & 0x0F;
+              uint8_t VY = (secondByte & 0xF0) >> 4;
+              uint8_t nibble = secondByte & 0x0F; // nibble is a 4 bit value.  Byte... Nibble lol 
+              printf("DRW V%d, V%d, %.1x \n",VX,VY,nibble); 
+            }
+            break;
+          case 0x0E: 
+            {
+              uint8_t VX = firstByte & 0x0F;
+
+              if(secondByte == 0x9E) // SKP
+              {
+                printf("SKP V%d \n",VX);
+              }
+              else if(secondByte == 0xA1) // SKNP
+              {
+                printf("SKNP V%d \n",VX);
+              }
+              else
+              {
+                cout << endl; // this fixes a newline error caused by some un handed commands
+              }
+            } 
+            break;
+          case 0x0F: 
+            {
+              uint8_t VX = firstByte & 0x0F;
+              // use a switch statment to look for other bytes
+              switch(secondByte)
+              {
+                case 0x07: printf("LD V%d, DT\n",VX); break;
+                case 0x0A: printf("LD V%d, K\n",VX); break;
+                case 0x15: printf("LD DT, V%d \n",VX); break;
+                case 0x1E: printf("ADD I, V%d \n",VX); break;
+                case 0x29: printf("LD F, V%d \n",VX); break;
+                case 0x33: printf("LD B, V%d \n",VX); break;
+                case 0x55: printf("LD [I], V%d \n",VX); break;
+                case 0x65: printf("LD V%d, [I] \n",VX); break;
+                default: cout << "unknown command" << endl; break;
+              }
+            }    
+            break;
+          default: cout << "unknown command" << endl; break;
+        }
       }
       
 
