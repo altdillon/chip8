@@ -23,6 +23,7 @@ set(SOURCE_FILES
   ./main.cpp
   ./asm8build.cpp
   ./ch8disassembler.cpp
+  ./ch8assembler.cpp
 )
 
 add_executable(chip8builder

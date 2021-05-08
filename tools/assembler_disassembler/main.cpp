@@ -6,7 +6,7 @@
 #include "disass8header.h"
 
 using namespace std;
-using namespace assembler;
+//using namespace assembler;
 
 // for the time being all the commandline UI functions will be in main
 // eventually this will be moved into their own file
@@ -61,6 +61,10 @@ int main(int argc, char **argv)
         cout << "object" << endl;
         toolopt.controlOptions.push_back(asmOpt_t::object);
       }
+      else if(argstr == "-h")
+      {
+        printHelp();
+      }
       else
       {
         if(argstr.find(".ch8") != string::npos)// || argstr.find(".ch8") != string::npos || argstr.find(".ch8") != string::npos || argstr.find(".S") != string::npos)     
@@ -85,48 +89,6 @@ int main(int argc, char **argv)
     }
   }
 
-  /*
-
-  if(argc < 1)
-  {
-    printHelp();
-  }
-  else 
-  {
-    //cout << "number of args: " << argc << endl;
-    //cout << "arg1: " << argv[1] << " file name: " << argv[2] << endl;
-    string command = string();
-    string fileName = string();
-    for(size_t i = 1;i<argc;i++)
-    {
-      if(isCommand(argv[i])) // determine the string is a command, -a or -d
-      {
-        //cout << "argv: " << argv[i] << endl;
-        command = argv[i];
-      }
-      else if(isCh8file(argv[i]) || isAsmFile(argv[i]))
-      {
-        fileName = argv[i];
-      }
-    }
-
-    
-
-    // print out some info
-    //cout << "file name: " << command << " command: " << fileName << endl;
-    if(isCh8file(fileName)) // disassemble a ch8 program
-    {
-      disassembler::Ch8file loadedch8File(fileName);
-      loadedch8File.printOut();
-      loadedch8File.disAssembleCh8();
-    }
-    
-    if(isAsmFile(fileName)) // assemble a ch8 program
-    {
-
-    }
-  }
-  */
   return 0;
 }
 
@@ -136,7 +98,13 @@ int parseCommand(toolOpt_t &opts)
   {
     if(opts.controlOptions.at(i) == assemble)
     {
-
+      vector<assembler::Ch8asmCode> asmFiles;
+      // go through all the files and use them to make assembled file
+      for(int j = 0;j<opts.asmFileNames.size();j++)
+      {
+        assembler::Ch8asmCode asmfile(opts.asmFileNames.at(i));
+        asmFiles.push_back(asmfile);
+      }
     }
     else if(opts.controlOptions.at(i) == dissable)
     {

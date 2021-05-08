@@ -19,8 +19,14 @@ namespace assembler
   class Ch8asmCode
   {
     public:
+      Ch8asmCode(); // defult constructor
+      Ch8asmCode(string filePath); // load an assemly program from a file
+      disassembler::Ch8file getByteCode(); // return the byte code
 
     private:
+      vector<string> rawAsm; // raw asm test
+      int lines;
+      int loadFromSource(vector<string>& buffer,string& path); // read in a souce file
   };
 
 }
